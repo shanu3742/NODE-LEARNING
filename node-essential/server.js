@@ -7,7 +7,6 @@ const app = express();
 
 
 const grab = (flag) => {
-    console.log(process.argv,process.argv.indexOf(flag))
   let indexAfterFlag = process.argv.indexOf(flag)+1;
   return process.argv[indexAfterFlag]
 }
@@ -65,13 +64,58 @@ let fileExtensionName = path.extname(__filename);
 console.log('file extension name',fileExtensionName)
 
 
+/**
+ * stdout and stdin
+ */
+
+
+//to write into the terminal
+process.stdout.write('writing to the terminal');
+
+const question = [
+    'what is your name',
+     'what is your address',
+]
+const answer  =[]
+const ask = (i=0) => {
+  process.stdout.write(`\n\n\n ${question[i]}`)
+  process.stdout.write(` > `)
+
+}
+ask(0)
+
+//listen to  type in terminal  till we collexted all answer
+process.stdin.on('data',(data) => {
+    // process.stdout.write('You Write:'+data.toString().trim())
+    answer.push(data.toString().trim());
+    if(answer.length<question.length){
+        ask(answer.length)
+    }else{
+        process.exit()
+        //connect the server if all require question  answer by developer or exit from the procee
+        // conectToServer()
+
+    }
+
+})
+process.on('exit' , () => {
+    console.log('your answer is:');
+    question.forEach((eq,index) => {
+        console.log(eq, answer[index]);
+    })
+})
 
 // Start the server
-app.listen(port, (err) => {
+
+const conectToServer = () => {
+    app.listen(port, (err) => {
     if (err) {
-        console.error('Failed to start server:', err.message);
+        console.error('\n Failed to start server:', err.message);
         process.exit(1);
        
     }
-    console.log(SERVER_CONNECTION_MESSAGE.concat(port));
+    console.log('\n'+SERVER_CONNECTION_MESSAGE.concat(port));
 });
+}
+
+
