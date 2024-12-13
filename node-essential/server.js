@@ -5,11 +5,16 @@ const fs = require('fs');
 const express = require('express');
 const app = express();
 
+
+const grab = (flag) => {
+    console.log(process.argv,process.argv.indexOf(flag))
+  let indexAfterFlag = process.argv.indexOf(flag)+1;
+  return process.argv[indexAfterFlag]
+}
+
 let packageJsonData = { config: {} };
-const cmdCommand = process.argv[2];
-const cliPort = cmdCommand && cmdCommand.includes('PORT=') 
-    ? cmdCommand.split('PORT=')[1] 
-    : null;
+const cliPort = grab('--port');
+console.log('cliport',cliPort)
 
 // Read package.json if CLI port is not provided
 if (!cliPort) {
@@ -29,11 +34,44 @@ if (isNaN(port) || port < 1 || port > 65535) {
     port = DEFAULT_PORT;
 }
 
+
+
+/**
+ * global object in browser is window but in node it's just global 
+ * 
+ */
+
+global.console.log('console using global object')
+let nodeAppname = 'shnau';
+console.log(`global object don't have access to local variable ${global.nodeAppname}`)
+
+console.log('get all key of global object')
+for(let key in global){
+    console.log(key)
+}
+
+
+
+/***
+ * file system basic 
+ */
+let  fileBaseName =   path.basename(__filename);
+console.log('file base   name:',fileBaseName);
+
+let fileDirName = path.dirname(__filename);
+console.log('file dir name',fileDirName)
+
+let fileExtensionName = path.extname(__filename);
+console.log('file extension name',fileExtensionName)
+
+
+
 // Start the server
 app.listen(port, (err) => {
     if (err) {
         console.error('Failed to start server:', err.message);
         process.exit(1);
+       
     }
     console.log(SERVER_CONNECTION_MESSAGE.concat(port));
 });
