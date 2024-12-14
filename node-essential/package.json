@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
      "test": "echo \"Error: no test specified\" && exit 1",
-     "start": "node server.js --port"
+     "start": "node server.js --port",
+     "build": "node server.js --serverBuild=true"
   },
   "config":{
     "port":3001
