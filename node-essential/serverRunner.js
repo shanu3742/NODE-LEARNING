@@ -2,7 +2,11 @@ const DEFAULT_PORT = 4000;
 const SERVER_CONNECTION_MESSAGE = 'Server Connected At Port Number: ';
 const path = require('path');
 const fs = require('fs');
+const utils = require('util')
+const v8 = require('v8')
 const express = require('express');
+const {EventEmitter} = require('events');
+const { collectAnswer } = require('./lib/collectAnswer');
 const app = express();
 
 
@@ -64,12 +68,61 @@ module.exports = () => {
       
       let fileExtensionName = path.extname(__filename);
       console.log('file extension name',fileExtensionName)
-      
 
+    //   core module of nodejs 
       
-      
+      const dirUploads = path.join(__dirname,'www','assets','image');
+      console.log('created a new path using path.join',dirUploads)
+
+     let  { TextEncoder, TextDecoder } = utils;
+     let  encoder = new TextEncoder();
+     let encodeText = encoder.encode('my name is shanu');
+     utils.log('encoded text',encodeText);
+     let decoder = new TextDecoder();
+     let decodedText =decoder.decode(encodeText)
+     utils.log('decoded text',decodedText)
+    
+     //v8
+
+     utils.log('get heap memory statics',v8.getHeapStatistics())
+
+
+   
+    // rl.question('what is your name ', (answer) => {
+    //   console.log('your name is : '+answer)
+    // })
+    const questions = [
+        'What is Your Name?',
+        "Where do you live?",
+        "What are you going to do with nodejs"
+    
+    ]
+   
+ let  collectAnswerEmiiter =   collectAnswer(questions,(ans) => {
+                                    console.log('Thankyou for answer')
+                                    console.log(ans);
+                                    process.exit()
+                                })
       // Start the server
+     collectAnswerEmiiter.on('answer',(data) => {
+        console.log('type terminal answer is : '+data)
+     })
       
+      //event emitter concept 
+
+    //   let event  = new EventEmitter();
+    //   event.on('userTeminal',(user,location,msg) => {
+    //      console.log(msg)
+    //      console.log('event emited by :  ' + user);
+    //      console.log('event emitted from : ' + location);
+    //   })
+
+    //   event.emit('userTeminal','shanu', 'kolkata', 'all gud')
+      
+    
+    //   process.stdin.on('data',(data) => {
+    //     event.emit('userTeminal','window', 'os', data)
+    //   })
       const conectToServer = () => {
           app.listen(port, (err) => {
           if (err) {
@@ -79,6 +132,8 @@ module.exports = () => {
           console.log('\n'+SERVER_CONNECTION_MESSAGE.concat(port));
       });
       }
+
+
       conectToServer()
       
       

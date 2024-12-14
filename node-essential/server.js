@@ -27,7 +27,7 @@ const incTime = () => {
 }
 let intervalSub =setInterval(incTime,waitInterval)
 const app = () => {
-    if(builderCmd[0] ==='--serverBuild' && builderCmd[1] ==='true'){
+    if(builderCmd && builderCmd.length>1 && builderCmd[0] ==='--serverBuild' && builderCmd[1] ==='true'){
         serverBuilder();
     }else{
         serverRunner();
