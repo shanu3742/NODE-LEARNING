@@ -155,9 +155,29 @@ app.get('/api/files', (req, res, next) => {
             fileError.statusCode = 404;
             return next(fileError); // Pass error to middleware
         }
-        res.json({ files: fileList });
+        res.status(200).json({ files: fileList });
     });
 });
+    // API to read files
+    app.get('/api/files/:fileName', (req, res, next) => {
+        let fileName = req.params.fileName;
+        let filePath = path.join(__dirname,fileName)
+        if(fs.existsSync(filePath)){
+             fs.readFile(filePath,'utf-8',(err,data) => {
+                if (err) {
+                    const fileError = new Error('Something went wrong while reading the file');
+                    fileError.statusCode = 404;
+                    return next(fileError); // Pass error to middleware
+                }
+                res.status(200).json(data);
+             })
+        }else{
+            const fileError = new Error('file not found');
+            fileError.statusCode = 404;
+            return next(fileError); // Pass error to middleware
+        }
+    });
+    
 
       const conectToServer = () => {
           app.listen(port, (err) => {
