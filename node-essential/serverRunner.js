@@ -12,6 +12,25 @@ const app = express();
 
 
 module.exports = () => {
+
+    /**
+     * 
+     * global error handling midleware 
+     * 
+     */
+
+    app.use((err,req,res,next) => {
+     const statusCode = err.statusCode??500;
+     const errorMessage = err.message??"Network Error";
+     const errResponse = {
+        statusCode:statusCode,
+        errorMessage:errorMessage
+     }
+
+     console.log(errResponse);
+     //send it to network  
+     res.status(statusCode).send(errResponse)
+    })
     const grab = (flag) => {
         let indexAfterFlag = process.argv.indexOf(flag)+1;
         return process.argv[indexAfterFlag]
@@ -123,6 +142,23 @@ module.exports = () => {
     //   process.stdin.on('data',(data) => {
     //     event.emit('userTeminal','window', 'os', data)
     //   })
+
+    /**
+     * to get all file of directory 
+     *
+     *  */
+    // API to read files
+app.get('/api/files', (req, res, next) => {
+    fs.readdir('./', (error, fileList) => {
+        if (error) {
+            const fileError = new Error('Something went wrong while reading the file');
+            fileError.statusCode = 404;
+            return next(fileError); // Pass error to middleware
+        }
+        res.json({ files: fileList });
+    });
+});
+
       const conectToServer = () => {
           app.listen(port, (err) => {
           if (err) {
